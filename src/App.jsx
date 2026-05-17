@@ -17,7 +17,11 @@ function App() {
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/sales" element={<SalesPage />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path="/deleted-customers" element={<DeletedCustomersPage />} />
+        <Route path="/deleted-customers" element={
+          <ProtectedRoute>
+            <DeletedCustomersPage />
+          </ProtectedRoute>
+        } />
       </Routes>
     </BrowserRouter>
   )
