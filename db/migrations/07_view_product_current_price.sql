@@ -1,6 +1,8 @@
 DROP VIEW IF EXISTS product_current_price;
 
-CREATE VIEW product_current_price AS
+CREATE VIEW product_current_price
+WITH (security_invoker = true)
+AS
 SELECT
   p.prodCode,
   p.description,

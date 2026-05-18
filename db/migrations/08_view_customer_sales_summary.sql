@@ -1,6 +1,8 @@
 DROP VIEW IF EXISTS customer_sales_summary;
 
-CREATE VIEW customer_sales_summary AS
+CREATE VIEW customer_sales_summary
+WITH (security_invoker = true)
+AS
 SELECT
   c.custno,
   c.custname,
@@ -10,8 +12,8 @@ SELECT
   SUM(sd.quantity * ph.unitPrice) AS totalSpend,
   MAX(s.salesDate)                AS lastSaleDate
 FROM customer c
-LEFT JOIN sales s          ON s.custNo = c.custno
-LEFT JOIN salesdetail sd   ON sd.transNo = s.transNo
+LEFT JOIN sales s        ON s.custNo = c.custno
+LEFT JOIN salesdetail sd ON sd.transNo = s.transNo
 LEFT JOIN (
   SELECT prodCode, unitPrice
   FROM pricehist ph1
