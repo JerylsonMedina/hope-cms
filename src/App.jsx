@@ -7,6 +7,7 @@ import SalesPage from "./pages/SalesPage"
 import AdminPage from "./pages/AdminPage"
 import DeletedCustomersPage from "./pages/DeletedCustomersPage"
 import AppShell from "./components/AppShell"
+import AuthCallbackPage from "./components/AuthCallbackPage"
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         {/* Public routes - NO shell */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
         {/* Protected routes - wrapped in AppShell */}
         <Route path="/customers" element={<AppShell><CustomersPage /></AppShell>} />
