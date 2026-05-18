@@ -20,7 +20,18 @@ function LoginPage() {
     if (error) {
       setError(error.message)
     } else {
+      const { data: userData } = await supabase
+      .from('user')
+      .select('record_status')
+      .eq('userid', data.user.id)
+      .single()
+
+    if (userData?.record_status !== 'ACTIVE') {
+      await supabase.auth.signOut()
+      setError('Your account is pending activation. Please contact admin.')
+    } else {
       window.location.href = '/customers'
+    }
     }
     setLoading(false)
   }
