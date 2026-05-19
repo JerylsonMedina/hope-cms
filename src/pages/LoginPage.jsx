@@ -21,7 +21,7 @@ function LoginPage() {
       setError(error.message)
     } else {
       const { data: userData } = await supabase
-      .from('user')
+      .from('public.user')
       .select('record_status')
       .eq('userid', data.user.id)
       .single()
