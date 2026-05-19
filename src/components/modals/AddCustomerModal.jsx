@@ -1,5 +1,6 @@
 // ── PERMISSION GATE ──
 // Change to test: 'USER' | 'ADMIN' | 'SUPERADMIN'
+import { useState } from 'react'
 const USER_ROLE = 'ADMIN'
 const PERMISSIONS = {
   USER:       { CUST_ADD: false, CUST_EDIT: false, CUST_DEL: false },
