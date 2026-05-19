@@ -1,15 +1,14 @@
 import { useState } from 'react'
+import AddCustomerModal from '../components/modals/AddCustomerModal'
+import EditCustomerModal from '../components/modals/EditCustomerModal'
+import SoftDeleteConfirmDialog from '../components/modals/SoftDeleteConfirmDialog'
 
 function CustomersPage() {
-  const [showModal, setShowModal] = useState(false)
-  const [editingCustomer, setEditingCustomer] = useState(null)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [search, setSearch] = useState('')
-  const [formData, setFormData] = useState({
-    custno: '',
-    custname: '',
-    address: '',
-    payterm: '30D'
-  })
 
   // Sprint 2: replace with real Supabase data
   const customers = []
@@ -20,26 +19,17 @@ function CustomersPage() {
   )
 
   function handleAddClick() {
-    setEditingCustomer(null)
-    setFormData({ custno: '', custname: '', address: '', payterm: '30D' })
-    setShowModal(true)
+    setShowAddModal(true)
   }
 
   function handleEditClick(customer) {
-    setEditingCustomer(customer)
-    setFormData({
-      custno: customer.custno,
-      custname: customer.custname,
-      address: customer.address,
-      payterm: customer.payterm
-    })
-    setShowModal(true)
+    setSelectedCustomer(customer)
+    setShowEditModal(true)
   }
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    // Sprint 2: connect to Supabase
-    setShowModal(false)
+  function handleDeleteClick(customer) {
+    setSelectedCustomer(customer)
+    setShowDeleteDialog(true)
   }
 
   return (
@@ -104,12 +94,8 @@ function CustomersPage() {
                       index % 2 === 0 ? 'bg-white' : 'bg-gray-50/40'
                     }`}
                   >
-                    <td className="px-6 py-4 text-sm text-gray-500 font-mono">
-                      {customer.custno}
-                    </td>
-                    <td className="px-6 py-4 text-sm font-semibold text-indigo-600 hover:text-indigo-700 cursor-pointer">
-                      {customer.custname}
-                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 font-mono">{customer.custno}</td>
+                    <td className="px-6 py-4 text-sm font-semibold text-indigo-600 hover:text-indigo-700 cursor-pointer">{customer.custname}</td>
                     <td className="px-6 py-4 text-sm text-gray-500">{customer.address}</td>
                     <td className="px-6 py-4 text-sm text-gray-600 font-medium">{customer.payterm}</td>
                     <td className="px-6 py-4">
@@ -126,7 +112,10 @@ function CustomersPage() {
                         >
                           Edit
                         </button>
-                        <button className="text-xs font-medium text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 px-3 py-1.5 rounded-lg transition">
+                        <button
+                          onClick={() => handleDeleteClick(customer)}
+                          className="text-xs font-medium text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 px-3 py-1.5 rounded-lg transition"
+                        >
                           Delete
                         </button>
                       </div>
@@ -148,95 +137,21 @@ function CustomersPage() {
         </div>
       </div>
 
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-100">
-
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <div>
-                <h2 className="text-base font-bold text-slate-800">
-                  {editingCustomer ? 'Edit Customer' : 'Add New Customer'}
-                </h2>
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {editingCustomer ? 'Update customer details below' : 'Fill in the details below'}
-                </p>
-              </div>
-              <button
-                onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-lg transition text-lg leading-none"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Modal Form */}
-            <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Customer No</label>
-                <input
-                  type="text"
-                  value={formData.custno}
-                  disabled={!!editingCustomer}
-                  onChange={(e) => setFormData({...formData, custno: e.target.value})}
-                  placeholder="e.g. C001"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 bg-gray-50 disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Customer Name</label>
-                <input
-                  type="text"
-                  value={formData.custname}
-                  onChange={(e) => setFormData({...formData, custname: e.target.value})}
-                  placeholder="Full name"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Address</label>
-                <input
-                  type="text"
-                  value={formData.address}
-                  onChange={(e) => setFormData({...formData, address: e.target.value})}
-                  placeholder="Full address"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 transition"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1.5">Pay Term</label>
-                <select
-                  value={formData.payterm}
-                  onChange={(e) => setFormData({...formData, payterm: e.target.value})}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 transition"
-                >
-                  <option value="COD">COD</option>
-                  <option value="30D">30 Days</option>
-                  <option value="45D">45 Days</option>
-                </select>
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition"
-                >
-                  {editingCustomer ? 'Save Changes' : 'Add Customer'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Modals */}
+      <AddCustomerModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+      />
+      <EditCustomerModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        customer={selectedCustomer}
+      />
+      <SoftDeleteConfirmDialog
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        customer={selectedCustomer}
+      />
 
     </div>
   )
