@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { supabase } from '../../lib/supabase'
 
 // ── PERMISSION GATE ──
 const USER_ROLE = 'ADMIN'
@@ -55,12 +56,25 @@ function EditCustomerModal({ isOpen, onClose, customer }) {
     ) : null
   }
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    // Sprint 2: connect to Supabase updateCustomer
-    alert(`Customer ${formData.custno} updated! (Supabase connects in Sprint 2)`)
+ async function handleSubmit(e) {
+  e.preventDefault()
+
+  const { error } = await supabase
+    .from('customer')
+    .update({
+      custname: formData.custname,
+      address: formData.address,
+      payterm: formData.payterm,
+    })
+    .eq('custno', formData.custno)
+
+  if (error) {
+    console.error('Error updating customer:', error)
+    alert('Failed to update customer: ' + error.message)
+  } else {
     onClose()
   }
+}
 
   if (!isOpen || !customer) return null
 

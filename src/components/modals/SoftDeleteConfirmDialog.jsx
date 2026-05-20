@@ -1,4 +1,5 @@
 // ── PERMISSION GATE ──
+import { supabase } from '../../lib/supabase'
 const USER_ROLE = 'SUPERADMIN'
 const PERMISSIONS = {
   USER:       { CUST_ADD: false, CUST_EDIT: false, CUST_DEL: false },
@@ -38,11 +39,19 @@ function SoftDeleteConfirmDialog({ isOpen, onClose, customer }) {
     ) : null
   }
 
-  function handleConfirm() {
-    // Sprint 2: connect to Supabase softDelete
-    alert(`Customer "${customer?.custname}" soft deleted! (Supabase connects in Sprint 2)`)
+  async function handleConfirm() {
+  const { error } = await supabase
+    .from('customer')
+    .update({ record_status: 'INACTIVE' })
+    .eq('custno', customer.custno)
+
+  if (error) {
+    console.error('Error deleting customer:', error)
+    alert('Failed to delete customer.')
+  } else {
     onClose()
   }
+}
 
   if (!isOpen || !customer) return null
 

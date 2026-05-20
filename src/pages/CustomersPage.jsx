@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
 import AddCustomerModal from '../components/modals/AddCustomerModal'
 import EditCustomerModal from '../components/modals/EditCustomerModal'
 import SoftDeleteConfirmDialog from '../components/modals/SoftDeleteConfirmDialog'
@@ -9,9 +10,28 @@ function CustomersPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [selectedCustomer, setSelectedCustomer] = useState(null)
   const [search, setSearch] = useState('')
+  const [customers, setCustomers] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  // Sprint 2: replace with real Supabase data
-  const customers = []
+  useEffect(() => {
+    fetchCustomers()
+  }, [])
+
+  async function fetchCustomers() {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('customer')
+      .select('custno, custname, address, payterm, record_status')
+      .eq('record_status', 'ACTIVE')
+      .order('custno', { ascending: true })
+
+    if (error) {
+      console.error('Error fetching customers:', error)
+    } else {
+      setCustomers(data || [])
+    }
+    setLoading(false)
+  }
 
   const filtered = customers.filter((c) =>
     c.custname?.toLowerCase().includes(search.toLowerCase()) ||
@@ -76,13 +96,18 @@ function CustomersPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="px-6 py-20 text-center">
+                    <p className="text-sm text-gray-400">Loading customers...</p>
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <span className="text-5xl">👥</span>
                       <p className="text-sm font-semibold text-gray-500">No customers found</p>
-                      <p className="text-xs text-gray-400">Live data connects in Sprint 2</p>
                     </div>
                   </td>
                 </tr>
@@ -101,7 +126,7 @@ function CustomersPage() {
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold px-2.5 py-1 rounded-full">
                         <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                        ACTIVE
+                        {customer.record_status}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -133,23 +158,23 @@ function CustomersPage() {
             Showing <span className="text-gray-600 font-semibold">{filtered.length}</span> of{' '}
             <span className="text-gray-600 font-semibold">{customers.length}</span> customers
           </p>
-          <span className="text-xs text-indigo-400 font-medium">● Sprint 2: Live data</span>
+          <span className="text-xs text-emerald-400 font-medium">● Live from Supabase</span>
         </div>
       </div>
 
       {/* Modals */}
       <AddCustomerModal
         isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
+        onClose={() => { setShowAddModal(false); fetchCustomers() }}
       />
       <EditCustomerModal
         isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
+        onClose={() => { setShowEditModal(false); fetchCustomers() }}
         customer={selectedCustomer}
       />
       <SoftDeleteConfirmDialog
         isOpen={showDeleteDialog}
-        onClose={() => setShowDeleteDialog(false)}
+        onClose={() => { setShowDeleteDialog(false); fetchCustomers() }}
         customer={selectedCustomer}
       />
 

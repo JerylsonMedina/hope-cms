@@ -20,7 +20,11 @@ function LoginPage() {
     if (error) {
       setError(error.message)
     } else {
-     
+      window.location.href = '/customers'
+  }
+  setLoading(false)
+}
+     /*
       const { data: userData } = await supabase
       .from('user')
       .select('record_status')
@@ -35,7 +39,7 @@ function LoginPage() {
     }
     }
     setLoading(false)
-  }
+  }*/
 
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({

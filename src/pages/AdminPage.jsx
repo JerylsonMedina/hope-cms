@@ -17,17 +17,17 @@ function AdminPage() {
       setLoading(true)
 
       const [customersRes, salesRes, recentRes] = await Promise.all([
-        supabase.from('customer').select('custno', { count: 'exact', head: true }).eq('status', 'ACTIVE'),
+        supabase.from('customer').select('custno', { count: 'exact', head: true }).eq('record_status', 'ACTIVE'),
         supabase.from('sales').select('transno', { count: 'exact', head: true }),
         supabase.from('sales').select('transno, salesdate, custno').order('salesdate', { ascending: false }).limit(5),
       ])
 
       // Total revenue from salesdetail
-      const { data: revenueData } = await supabase
-        .from('salesdetail')
-        .select('totalprice')
+     const { data: revenueData } = await supabase
+  .from('customer_sales_summary')
+  .select('totalspend')
 
-      const totalRevenue = revenueData?.reduce((sum, row) => sum + parseFloat(row.totalprice || 0), 0) ?? 0
+const totalRevenue = revenueData?.reduce((sum, row) => sum + parseFloat(row.totalspend || 0), 0) ?? 0
 
       setStats({
         totalCustomers: customersRes.count ?? '—',

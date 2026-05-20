@@ -9,36 +9,45 @@ function SalesPage() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const fetchSales = async () => {
-      setLoading(true)
-      setError(null)
+  const fetchSales = async () => {
+    setLoading(true)
+    setError(null)
 
-      const { data, error } = await supabase
-        .from('sales') // change to your actual table name
-        .select('*')
-        .order('salesdate', { ascending: false })
+    const { data, error } = await supabase
+      .from('salesdetail')
+      .select(`
+        transno,
+        prodcode,
+        quantity,
+        sales (
+          custno,
+          salesdate,
+          empno
+        )
+      `)
+      .order('transno', { ascending: false })
 
-      if (error) {
-        setError(error.message)
-      } else {
-        setSales(data || [])
-      }
-
-      setLoading(false)
+    if (error) {
+      setError(error.message)
+    } else {
+      setSales(data || [])
     }
 
-    fetchSales()
-  }, [])
+    setLoading(false)
+  }
+
+  fetchSales()
+}, [])
 
   const mapRow = (row) => ({
-    saleid:     row.transno,
-    custname:   row.custno,
-    product:    row.product    ?? '—',
-    quantity:   row.quantity   ?? '—',
-    totalprice: row.totalprice ?? null,
-    saledate:   row.salesdate,
-    empno:      row.empno,
-  })
+  saleid:     row.transno,
+  custname:   row.sales?.custno ?? '—',
+  product:    row.prodcode ?? '—',
+  quantity:   row.quantity ?? '—',
+  totalprice: null,  // no totalprice column exists
+  saledate:   row.sales?.salesdate ?? '—',
+  empno:      row.sales?.empno ?? '—',
+})
 
   const mapped = sales.map(mapRow)
 
@@ -55,7 +64,7 @@ function SalesPage() {
     return matchesSearch && matchesMonth
   })
 
-  const totalRevenue = filtered.reduce((sum, s) => sum + parseFloat(s.totalprice || 0), 0)
+  const totalRevenue = 0  // requires joining pricehist — backend fix needed
   const uniqueCustomers = new Set(filtered.map((s) => s.custname)).size
   const months = [...new Set(mapped.map((s) => s.saledate?.slice(0, 7)))].filter(Boolean).sort().reverse()
 
