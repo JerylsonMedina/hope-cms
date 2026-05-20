@@ -10,11 +10,7 @@ CREATE POLICY cust_visibility ON customer
 FOR SELECT TO authenticated
 USING (
   record_status = 'ACTIVE'
-  OR EXISTS (
-    SELECT 1 FROM public.user
-    WHERE userId = auth.uid()::text
-    AND user_type IN ('ADMIN','SUPERADMIN')
-  )
+  OR get_my_user_type() IN ('ADMIN','SUPERADMIN')
 );
 
 CREATE POLICY customer_insert ON customer
@@ -22,7 +18,7 @@ FOR INSERT TO authenticated
 WITH CHECK (
   EXISTS (
     SELECT 1 FROM "UserModule_Rights"
-    WHERE userId = auth.uid()::text
+    WHERE userId = auth.jwt()->>'email'
     AND rightId = 'CUST_ADD'
     AND right_value = 1
   )
@@ -33,7 +29,7 @@ FOR UPDATE TO authenticated
 USING (
   EXISTS (
     SELECT 1 FROM "UserModule_Rights"
-    WHERE userId = auth.uid()::text
+    WHERE userId = auth.jwt()->>'email'
     AND rightId = 'CUST_EDIT'
     AND right_value = 1
   )
@@ -44,7 +40,7 @@ FOR UPDATE TO authenticated
 USING (
   EXISTS (
     SELECT 1 FROM "UserModule_Rights"
-    WHERE userId = auth.uid()::text
+    WHERE userId = auth.jwt()->>'email'
     AND rightId = 'CUST_DEL'
     AND right_value = 1
   )
@@ -53,9 +49,5 @@ USING (
 CREATE POLICY customer_recovery ON customer
 FOR UPDATE TO authenticated
 USING (
-  EXISTS (
-    SELECT 1 FROM public.user
-    WHERE userId = auth.uid()::text
-    AND user_type IN ('ADMIN','SUPERADMIN')
-  )
+  get_my_user_type() IN ('ADMIN','SUPERADMIN')
 );
