@@ -1,14 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
 
 function ProductsPage() {
   const [search, setSearch] = useState('')
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
 
-  // Sprint 2: replace with real Supabase data
-  const products = []
+  useEffect(() => {
+    async function fetchProducts() {
+      const { data, error } = await supabase
+        .from('product_current_price')
+        .select('*')
+        .order('prodcode', { ascending: true })
+
+      if (error) {
+        console.error('Error fetching products:', error)
+      } else {
+        setProducts(data || [])
+      }
+      setLoading(false)
+    }
+    fetchProducts()
+  }, [])
 
   const filtered = products.filter((p) =>
     p.description?.toLowerCase().includes(search.toLowerCase()) ||
-    p.prodCode?.toLowerCase().includes(search.toLowerCase()) ||
+    p.prodcode?.toLowerCase().includes(search.toLowerCase()) ||
     p.unit?.toLowerCase().includes(search.toLowerCase())
   )
 
@@ -35,7 +52,7 @@ function ProductsPage() {
           </div>
           <div>
             <p className="text-xs text-gray-400 uppercase font-semibold tracking-wider">Total Products</p>
-            <p className="text-2xl font-bold text-slate-800">{products.length || '—'}</p>
+            <p className="text-2xl font-bold text-slate-800">{loading ? '—' : products.length}</p>
           </div>
         </div>
 
@@ -49,8 +66,8 @@ function ProductsPage() {
           <div>
             <p className="text-xs text-gray-400 uppercase font-semibold tracking-wider">Avg. Price</p>
             <p className="text-2xl font-bold text-slate-800">
-              {products.length
-                ? `$${(products.reduce((s, p) => s + parseFloat(p.unitprice || 0), 0) / products.length).toFixed(2)}`
+              {loading ? '—' : products.length
+                ? `₱${(products.reduce((s, p) => s + parseFloat(p.unitprice || 0), 0) / products.length).toFixed(2)}`
                 : '—'}
             </p>
           </div>
@@ -66,9 +83,7 @@ function ProductsPage() {
           <div>
             <p className="text-xs text-gray-400 uppercase font-semibold tracking-wider">Units</p>
             <p className="text-2xl font-bold text-slate-800">
-              {products.length
-                ? new Set(products.map((p) => p.unit)).size
-                : '—'}
+              {loading ? '—' : new Set(products.map((p) => p.unit)).size}
             </p>
           </div>
         </div>
@@ -99,7 +114,13 @@ function ProductsPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="4" className="px-6 py-20 text-center">
+                    <p className="text-sm text-gray-400">Loading products...</p>
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan="4" className="px-6 py-20 text-center">
                     <div className="flex flex-col items-center gap-3">
@@ -110,21 +131,20 @@ function ProductsPage() {
                         </svg>
                       </div>
                       <p className="text-sm font-semibold text-gray-500">No products found</p>
-                      <p className="text-xs text-gray-400">Live data connects in Sprint 2</p>
                     </div>
                   </td>
                 </tr>
               ) : (
                 filtered.map((product, index) => (
                   <tr
-                    key={product.prodCode}
+                    key={product.prodcode}
                     className={`border-b border-gray-100 hover:bg-indigo-50/30 transition-colors duration-100 ${
                       index % 2 === 0 ? 'bg-white' : 'bg-gray-50/40'
                     }`}
                   >
                     <td className="px-6 py-4">
                       <span className="inline-block bg-gray-100 text-gray-600 text-xs font-mono px-2.5 py-1 rounded-md">
-                        {product.prodCode}
+                        {product.prodcode}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm font-medium text-slate-700">
@@ -136,7 +156,7 @@ function ProductsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm font-semibold text-emerald-600">
-                      ${parseFloat(product.unitprice).toFixed(2)}
+                      ₱{parseFloat(product.unitprice || 0).toFixed(2)}
                     </td>
                   </tr>
                 ))
@@ -151,7 +171,7 @@ function ProductsPage() {
             Showing <span className="text-gray-600 font-semibold">{filtered.length}</span> of{' '}
             <span className="text-gray-600 font-semibold">{products.length}</span> products
           </p>
-          <span className="text-xs text-indigo-400 font-medium">● Sprint 2: Live data</span>
+          <span className="text-xs text-emerald-400 font-medium">● Live from Supabase</span>
         </div>
       </div>
 

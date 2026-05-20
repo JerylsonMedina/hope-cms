@@ -11,24 +11,27 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   // Function to fetch user data from our 'user' table
-  async function fetchUser(userId) {
-    try {
-      const { data, error } = await supabase
-        .from('user')
-        .select('user_type, username, email')
-        .eq('userid', userId)
-        .single()
-      
-      if (error) throw error
-      
-      setUser(data)
-      setUserType(data.user_type)
-    } catch (error) {
-      console.error('Error fetching user:', error)
-    } finally {
-      setLoading(false)
-    }
+ async function fetchUser(userId) {
+  try {
+    const { data, error } = await supabase
+      .from('user')
+      .select('*')
+      .eq('userid', userId)
+      .single()
+
+    if (error) throw error
+
+    console.log(data)
+
+    setUser(data)
+    setUserType(data.user_type)
+
+  } catch (error) {
+    console.error('Error fetching user:', error)
+  } finally {
+    setLoading(false)
   }
+}
 
   // Check if user is logged in when app starts
   useEffect(() => {

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-
+import { useState } from 'react'  
+import { supabase } from '../lib/supabase'
 function SalesPage() {
   const [search, setSearch] = useState('')
   const [monthFilter, setMonthFilter] = useState('')
