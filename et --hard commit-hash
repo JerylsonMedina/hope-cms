@@ -1,0 +1,30 @@
+[33ma9ea1df[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/m2-frontend[m[33m, [m[1;31morigin/feature/m2-frontend[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m95b9410[m HEAD@{1}: rebase (abort): returning to refs/heads/feature/m2-frontend
+[33m95b9410[m HEAD@{2}: rebase (abort): returning to refs/heads/feature/m2-frontend
+[33m95b9410[m HEAD@{3}: rebase (abort): returning to refs/heads/feature/m2-frontend
+[33m95b9410[m HEAD@{4}: rebase (abort): returning to refs/heads/feature/m2-frontend
+[33m95b9410[m HEAD@{5}: commit: feat/ui-product-catalogue (Read-only product table with current prices)
+[33ma9ea1df[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/m2-frontend[m[33m, [m[1;31morigin/feature/m2-frontend[m[33m)[m HEAD@{6}: commit: PR-08 AND UPDATED OTHER PAGES
+[33mcc955be[m HEAD@{7}: commit: feat/ui-customer-crud: Add AddCustomerModal, EditCustomerModal, SoftDeleteConfirmDialog
+[33m3196a6c[m HEAD@{8}: commit: feat: Added AddCustomerModal, EditCustomerModal, SoftDeleteConfirmDialog with permission gates
+[33m5b61807[m HEAD@{9}: commit: Updated CustomerListPage
+[33mccbb72d[m HEAD@{10}: commit: Updated CustomersPage with fixes
+[33mcfb95d0[m HEAD@{11}: commit: feat: Updated CustomersPage with role-based visibility and dummy data
+[33mcff83a6[m[33m ([m[1;31morigin/dev[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{12}: checkout: moving from feature/m2-frontend to feature/m2-frontend
+[33mcff83a6[m[33m ([m[1;31morigin/dev[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{13}: pull origin dev: Fast-forward
+[33m4137219[m HEAD@{14}: commit: feat/ui-auth-callback: Added auth callback loading page with spinner
+[33m3107455[m HEAD@{15}: commit (merge): resolve merge conflict in App.jsx
+[33m2b1bc23[m HEAD@{16}: checkout: moving from feature/m2-frontend to feature/m2-frontend
+[33m2b1bc23[m HEAD@{17}: commit: remove AuthCallback.jsx and clean up App.jsx
+[33m0bf54d0[m HEAD@{18}: checkout: moving from feature/m2-frontend to feature/m2-frontend
+[33m0bf54d0[m HEAD@{19}: commit: feat/ui-auth-callback: Added auth callback loading page with spinner
+[33m44d500d[m HEAD@{20}: commit: feat/ui-app-shell: Added AppShell layout, sidebar, and auth callback page
+[33m4032515[m HEAD@{21}: commit: Added Register page
+[33m48784b4[m HEAD@{22}: cherry-pick: Added Login Page
+[33m50de21f[m HEAD@{23}: cherry-pick: Remove .env from tracking
+[33m0dd652e[m HEAD@{24}: cherry-pick: Added Login Page
+[33mabe1a5d[m[33m ([m[1;31morigin/feature/m5-docs[m[33m, [m[1;31morigin/feature/m4-auth[m[33m)[m HEAD@{25}: checkout: moving from dev to feature/m2-frontend
+[33m35efbac[m[33m ([m[1;32mdev[m[33m)[m HEAD@{26}: commit: Added Login Page
+[33m5b299cb[m HEAD@{27}: commit: Remove .env from tracking
+[33mfc8753f[m HEAD@{28}: commit: Added Login Page
+[33m913ff7e[m HEAD@{29}: clone: from https://github.com/JerylsonMedina/hope-cms.git
