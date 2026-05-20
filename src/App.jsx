@@ -7,7 +7,7 @@ import SalesPage from "./pages/SalesPage"
 import AdminPage from "./pages/AdminPage"
 import DeletedCustomersPage from "./pages/DeletedCustomersPage"
 import AppShell from "./components/AppShell"
-import AuthCallbackPage from "./components/AuthCallbackPage"
+import AuthCallbackPage from "./pages/AuthCallbackPage"
 import CustomerListPage from "./pages/CustomerListPage"
 
 function App() {
