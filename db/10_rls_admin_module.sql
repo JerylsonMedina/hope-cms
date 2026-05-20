@@ -7,28 +7,35 @@ DROP POLICY IF EXISTS user_select_own ON public.user;
 DROP POLICY IF EXISTS umr_select_all ON "UserModule_Rights";
 DROP POLICY IF EXISTS umr_admin_guard ON "UserModule_Rights";
 
+CREATE OR REPLACE FUNCTION get_my_user_type()
+RETURNS TEXT AS $$
+  SELECT user_type FROM public.user
+  WHERE userid = auth.jwt()->>'email'
+  LIMIT 1;
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
 CREATE POLICY user_select_own ON public.user
 FOR SELECT TO authenticated
-USING (userid = auth.uid()::text);
+USING (userid = auth.jwt()->>'email');
 
 CREATE POLICY user_select_all ON public.user
 FOR SELECT TO authenticated
 USING (
-  (auth.jwt() ->> 'user_type') IN ('ADMIN','SUPERADMIN')
-  OR userid = auth.uid()::text
+  get_my_user_type() IN ('ADMIN','SUPERADMIN')
+  OR userid = auth.jwt()->>'email'
 );
 
 CREATE POLICY user_update_admin ON public.user
 FOR UPDATE TO authenticated
 USING (
   user_type != 'SUPERADMIN'
-  AND (auth.jwt() ->> 'user_type') IN ('ADMIN','SUPERADMIN')
+  AND get_my_user_type() IN ('ADMIN','SUPERADMIN')
 );
 
 CREATE POLICY umr_select_all ON "UserModule_Rights"
 FOR SELECT TO authenticated
 USING (
-  (auth.jwt() ->> 'user_type') IN ('ADMIN','SUPERADMIN')
+  get_my_user_type() IN ('ADMIN','SUPERADMIN')
 );
 
 CREATE POLICY umr_admin_guard ON "UserModule_Rights"
@@ -39,7 +46,7 @@ USING (
     WHERE userid = "UserModule_Rights".userId
     AND user_type = 'SUPERADMIN'
   )
-  AND (auth.jwt() ->> 'user_type') IN ('ADMIN','SUPERADMIN')
+  AND get_my_user_type() IN ('ADMIN','SUPERADMIN')
 );
 
 SELECT tablename, rowsecurity
