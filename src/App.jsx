@@ -9,6 +9,7 @@ import DeletedCustomersPage from "./pages/DeletedCustomersPage"
 import AppShell from "./components/AppShell"
 import AuthCallbackPage from "./components/AuthCallbackPage"
 import CustomerListPage from "./pages/CustomerListPage"
+import CustomerSalesSummaryPage from "./pages/CustomerSalesSummaryPage"
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/admin" element={<AppShell><AdminPage /></AppShell>} />
         <Route path="/deleted-customers" element={<AppShell><DeletedCustomersPage /></AppShell>} />
         <Route path="/customer-list" element={<AppShell><CustomerListPage /></AppShell>} />
+        <Route path="/customer-sales-summary" element={<AppShell><CustomerSalesSummaryPage /></AppShell>} />
       </Routes>
     </BrowserRouter>
   )
