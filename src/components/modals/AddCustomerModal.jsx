@@ -1,6 +1,7 @@
 // ── PERMISSION GATE ──
 // Change to test: 'USER' | 'ADMIN' | 'SUPERADMIN'
 import { useState } from 'react'
+import { supabase } from '../../lib/supabase'
 const USER_ROLE = 'ADMIN'
 const PERMISSIONS = {
   USER:       { CUST_ADD: false, CUST_EDIT: false, CUST_DEL: false },
@@ -43,13 +44,27 @@ function AddCustomerModal({ isOpen, onClose }) {
     ) : null
   }
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    // Sprint 2: connect to Supabase
-    alert('Customer added! (Supabase connects in Sprint 2)')
+  async function handleSubmit(e) {
+  e.preventDefault()
+
+  const { error } = await supabase
+    .from('customer')
+    .insert({
+      custno: formData.custno,
+      custname: formData.custname,
+      address: formData.address,
+      payterm: formData.payterm,
+      record_status: 'ACTIVE'
+    })
+
+  if (error) {
+    console.error('Error adding customer:', error)
+    alert('Failed to add customer: ' + error.message)
+  } else {
     setFormData({ custno: '', custname: '', address: '', payterm: 'COD' })
     onClose()
   }
+}
 
   if (!isOpen) return null
 
