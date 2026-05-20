@@ -20,7 +20,7 @@ function LoginPage() {
     if (error) {
       setError(error.message)
     } else {
-   
+     
       const { data: userData } = await supabase
       .from('public.user')
       .select('record_status')
