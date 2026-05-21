@@ -20,12 +20,12 @@ function LoginPage() {
     if (error) {
       setError(error.message)
     } else {
-
+    
       const { data: userData } = await supabase
-      .from('public.user')
-      .select('record_status')
-      .eq('userid', data.user.id)
-      .single()
+  .from('user')
+  .select('record_status')
+  .eq('userid', data.user.email)
+  .single()
 
     if (userData?.record_status !== 'ACTIVE') {
       await supabase.auth.signOut()
@@ -40,6 +40,12 @@ function LoginPage() {
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        queryParams: {
+          prompt: 'select_account',  // ✅ forces account picker every time
+        },
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
     })
     if (error) setError(error.message)
   }
@@ -72,7 +78,6 @@ function LoginPage() {
           type="button"
           className="w-full flex items-center justify-center gap-3 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 font-medium text-sm py-3 px-4 rounded-xl transition-all duration-150 shadow-sm mb-6"
         >
-          {/* Google G Logo SVG */}
           <svg width="18" height="18" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
             <path fill="#EA4335" d="M24 9.5c3.14 0 5.95 1.08 8.17 2.85l6.09-6.09C34.46 3.09 29.5 1 24 1 14.82 1 7.07 6.48 3.64 14.22l7.08 5.5C12.4 13.72 17.73 9.5 24 9.5z"/>
             <path fill="#4285F4" d="M46.1 24.5c0-1.64-.15-3.22-.42-4.75H24v9h12.42c-.54 2.9-2.18 5.36-4.64 7.01l7.19 5.59C43.18 37.13 46.1 31.27 46.1 24.5z"/>
