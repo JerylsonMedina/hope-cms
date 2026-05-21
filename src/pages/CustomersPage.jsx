@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import AddCustomerModal from '../components/modals/AddCustomerModal'
 import EditCustomerModal from '../components/modals/EditCustomerModal'
 import SoftDeleteConfirmDialog from '../components/modals/SoftDeleteConfirmDialog'
+import { useRights } from "../hooks/useRights"
 
 function CustomersPage() {
   const [showAddModal, setShowAddModal] = useState(false)

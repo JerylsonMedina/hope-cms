@@ -1,7 +1,7 @@
 import { useAuth } from '../context/AuthContext'
 
 export function useRights() {
-  const { userType, loading } = useAuth()
+  const { user_type, loading } = useAuth()
 
   // While loading, return false for all rights
   if (loading) {
@@ -16,7 +16,7 @@ export function useRights() {
   }
 
   // SUPERADMIN has all rights
-  if (userType === 'SUPERADMIN') {
+  if (user_type === 'SUPERADMIN') {
     return {
       canAdd: true,
       canEdit: true,
@@ -29,7 +29,7 @@ export function useRights() {
   }
 
   // ADMIN can add, edit, view deleted, but NO delete
-  if (userType === 'ADMIN') {
+  if (user_type === 'ADMIN') {
     return {
       canAdd: true,
       canEdit: true,

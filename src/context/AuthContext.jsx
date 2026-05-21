@@ -1,50 +1,46 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
-// Create the context
 const AuthContext = createContext()
 
-// Provider component (wraps your app)
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [userType, setUserType] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Function to fetch user data from our 'user' table
-  async function fetchUser(userId) {
+  async function fetchUser(email) {
     try {
       const { data, error } = await supabase
         .from('user')
         .select('user_type, record_status')
-        .eq('userid', userId)
+        .eq('userid', email)        // ← userid stores email, not UUID
         .single()
-      
+
       if (error) throw error
-      
+
       setUser(data)
       setUserType(data.user_type)
     } catch (error) {
       console.error('Error fetching user:', error)
+      setUser(null)
+      setUserType(null)
     } finally {
       setLoading(false)
     }
   }
 
-  // Check if user is logged in when app starts
   useEffect(() => {
-    // Get current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        fetchUser(session.user.id)
+        fetchUser(session.user.email)   // ← was session.user.id
       } else {
         setLoading(false)
       }
     })
 
-    // Listen for auth changes (login, logout)
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        fetchUser(session.user.id)
+        fetchUser(session.user.email)   // ← was session.user.id
       } else {
         setUser(null)
         setUserType(null)
@@ -52,7 +48,6 @@ export function AuthProvider({ children }) {
       }
     })
 
-    // Cleanup listener when component unmounts
     return () => listener?.subscription.unsubscribe()
   }, [])
 
@@ -63,7 +58,6 @@ export function AuthProvider({ children }) {
   )
 }
 
-// Hook to use auth context in any component
 export function useAuth() {
   return useContext(AuthContext)
 }
